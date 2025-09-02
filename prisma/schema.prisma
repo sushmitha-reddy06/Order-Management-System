@@ -1,0 +1,179 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum Role {
+  buyer
+  supplier
+  admin
+}
+
+enum OrderStatus {
+  PENDING
+  APPROVED
+  FULFILLED
+  CANCELLED
+  REJECTED
+}
+
+// BELOW ALL MODELS
+
+// Users
+model User {
+  id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  full_name          String               @db.VarChar(255)
+  contact_number     String               @db.VarChar(20)
+  email              String               @unique @db.VarChar(255)
+  password_hash      String
+  role               Role                 @default(buyer)
+  is_active          Boolean              @default(true)
+  created_at         DateTime             @default(now()) @db.Timestamp(6)
+  updated_at         DateTime             @default(now()) @db.Timestamp(6)
+  deleted_at         DateTime?            @db.Timestamp(6)
+
+  // Relations
+  blacklisted_tokens BlacklistedToken[]
+  products           Product[]            @relation("ProductSupplier")
+  orders             Order[]              @relation("OrderBuyer")
+  supplierOrders     Order[]              @relation("OrderSupplier")
+  orderStatusHistory OrderStatusHistory[]
+
+  @@index([email], map: "idx_users_email")
+  @@index([role], map: "idx_users_role")
+  @@map("users")
+}
+
+// JWT Blacklist
+model BlacklistedToken {
+  id             Int       @id @default(autoincrement())
+  token          String    @unique
+  user_id        String    @db.Uuid
+  blacklisted_at DateTime  @default(now()) @db.Timestamp(6)
+  expires_at     DateTime  @db.Timestamp(6)
+
+  // Relations
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([token], map: "idx_blacklisted_tokens_token")
+  @@index([user_id], map: "idx_blacklisted_tokens_user_id")
+  @@map("blacklisted_tokens")
+}
+
+// Units
+model Unit {
+  id           String   @id @default(uuid()) @db.Uuid
+  code         String   @unique
+  name         String
+  description  String?
+  factorToBase Float    @default(1.0)
+  isBaseUnit   Boolean  @default(false)
+  created_at   DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  products   Product[]
+  orderItems OrderItem[]
+
+  @@map("units")
+}
+
+// Products
+model Product {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String
+  description  String?
+  price        Float
+  baseUnitCode String
+  supplierId   String   @db.Uuid
+  category     String?
+  imageUrl     String?
+  is_active    Boolean  @default(true)
+  created_at   DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  supplier   User        @relation("ProductSupplier", fields: [supplierId], references: [id], onDelete: Cascade)
+  unit       Unit        @relation(fields: [baseUnitCode], references: [code], onDelete: Restrict)
+  inventory  Inventory?
+  orderItems OrderItem[]
+
+  @@unique([supplierId, name])
+  @@map("products")
+}
+
+// Inventory
+model Inventory {
+  id        String   @id @default(uuid()) @db.Uuid
+  productId String   @unique @db.Uuid
+  quantity  Float    @default(0)
+  minStock  Float    @default(0)
+  maxStock  Float?
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("inventory")
+}
+
+// Orders
+model Order {
+  id          String      @id @default(uuid()) @db.Uuid
+  buyerId     String      @db.Uuid
+  supplierId  String      @db.Uuid
+  totalAmount Float
+  currency    String      @default("USD")
+  status      OrderStatus @default(PENDING)
+  created_at  DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  buyer         User                 @relation("OrderBuyer", fields: [buyerId], references: [id], onDelete: Cascade)
+  supplier      User                 @relation("OrderSupplier", fields: [supplierId], references: [id], onDelete: Cascade)
+  items         OrderItem[]
+  statusHistory OrderStatusHistory[]
+
+  @@map("orders")
+}
+
+// Order Items
+model OrderItem {
+  id           String  @id @default(uuid()) @db.Uuid
+  orderId      String  @db.Uuid
+  productId    String  @db.Uuid
+  quantity     Float
+  unitCode     String
+  unitPrice    Float
+  totalPrice   Float
+  quantityBase Float
+
+  // Relations
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  unit    Unit    @relation(fields: [unitCode], references: [code], onDelete: Restrict)
+
+  @@map("order_items")
+}
+
+// Order Status History
+model OrderStatusHistory {
+  id         String       @id @default(uuid()) @db.Uuid
+  orderId    String       @db.Uuid
+  userId     String?      @db.Uuid
+  fromStatus OrderStatus?
+  toStatus   OrderStatus
+  reason     String?
+  created_at DateTime     @default(now())
+
+  // Relations
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  user  User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("order_status_history")
+}

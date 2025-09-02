@@ -1,0 +1,207 @@
+openapi: 3.0.0
+info:
+  title: OMS - Seller Product API
+  version: 1.0.0
+  description: Endpoints for suppliers to manage their products and inventory in the Order Management System
+
+tags:
+  - name: SellerProducts
+    description: Supplier-specific product and inventory management
+
+paths:
+  /api/seller/addProducts:
+    post:
+      summary: Create a new product
+      tags: [SellerProducts]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                  format: float
+                base_unit_code:
+                  type: string
+                stock:
+                  type: number
+                  format: float
+      responses:
+        201:
+          description: Product created successfully
+        400:
+          description: Validation error
+        401:
+          description: Unauthorized
+
+  /api/seller/getAllProducts:
+    get:
+      summary: Get all products for supplier
+      tags: [SellerProducts]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        200:
+          description: Products retrieved successfully
+        401:
+          description: Unauthorized
+
+  /api/seller/getProductById/{id}:
+    get:
+      summary: Get single product details
+      tags: [SellerProducts]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Product retrieved successfully
+        401:
+          description: Unauthorized
+        404:
+          description: Product not found
+
+  /api/seller/updateProduct/{id}:
+    put:
+      summary: Update product details
+      tags: [SellerProducts]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Fields to update (partial update allowed)
+      responses:
+        200:
+          description: Product updated successfully
+        400:
+          description: Validation error
+        401:
+          description: Unauthorized
+        404:
+          description: Product not found
+
+  /api/seller/deleteProduct/{id}:
+    delete:
+      summary: Delete product
+      tags: [SellerProducts]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Product deleted successfully
+        401:
+          description: Unauthorized
+        404:
+          description: Product not found
+
+  /api/seller/updateStockProduct/{id}/stock:
+    patch:
+      summary: Update inventory stock
+      tags: [SellerProducts]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - delta_base
+              properties:
+                delta_base:
+                  type: number
+                  description: Change in stock (positive to add, negative to reduce)
+      responses:
+        200:
+          description: Inventory updated successfully
+        400:
+          description: Validation error
+        401:
+          description: Unauthorized
+        404:
+          description: Product not found
+
+  /api/seller/getOrders:
+    get:
+      summary: Get supplier orders
+      tags: [SellerProducts]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        200:
+          description: Orders retrieved successfully
+        401:
+          description: Unauthorized
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,45 @@
+{
+  "name": "oms-backend",
+  "version": "1.0.0",
+  "description": "Order Management System API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node lib/server.js",
+    "dev": "nodemon lib/server.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "migrate:up": "node lib/database/migrate.js up",
+    "migrate:down": "node lib/database/migrate.js down"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@prisma/client": "^6.15.0",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "http": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.1",
+    "node-cache": "^5.1.2",
+    "path": "^0.12.7",
+    "pg": "^8.16.3",
+    "pg-migrate": "^2.0.1",
+    "prisma": "^6.15.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/morgan": "^1.9.10",
+    "jest": "^30.1.3",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.4"
+  }
+}
