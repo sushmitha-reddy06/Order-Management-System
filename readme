@@ -15,79 +15,80 @@ A B2B Order Management System built with Node.js, Express, and PostgreSQL. Suppo
 
 ---
 
-# API Endpoints (Base URL: /api/v1)
+# API Endpoints (Base/Prefix URL: /api)
 
-* Authentication:
+## **Authentication**:
 
-POST /auth/register – Register user
+* POST /auth/register – Register user
 
-POST /auth/login – Login
+* POST /auth/login – Login
 
-GET /auth/me – Get current user
+* GET /auth/me – Get current user
 
-POST /auth/logout – Logout
+* POST /auth/logout – Logout
+---
+## **Public**:
 
-* Public:
+* GET /public/products – Browse products
 
-GET /public/products – Browse products
+* GET /public/products/search – Search products
 
-GET /public/products/search – Search products
+* GET /public/products/:id – Product details
 
-GET /public/products/:id – Product details
+* GET /public/categories – Categories
+---
+## **Buyer**:
 
-GET /public/categories – Categories
+* POST /buyer/orders – Place order
 
-* Buyer:
+* GET /buyer/orders – Get buyer orders
 
-POST /buyer/orders – Place order
+* PATCH /buyer/orders/:id/cancel – Cancel order
+---
+## **Supplier**:
 
-GET /buyer/orders – Get buyer orders
+* POST /seller/addProducts – Add product
 
-PATCH /buyer/orders/:id/cancel – Cancel order
+* GET /seller/getAllProducts – Supplier products
 
-* Supplier:
+* PUT /seller/updateProduct/:id – Update product
 
-POST /seller/products – Add product
+* PATCH /seller/updateStockProduct/:id/stock – Update stock
 
-GET /seller/products – Supplier products
+* GET /seller/getOrders – Supplier orders
+---
+## **Admin**:
 
-PUT /seller/products/:id – Update product
+* GET /admin/users – All users
 
-PATCH /seller/products/:id/stock – Update stock
+* PATCH /admin/users/:id/status – Update user status
 
-GET /seller/orders – Supplier orders
+* DELETE /admin/users/:id – Delete user
 
-* Admin:
+* GET /admin/orders – All orders
 
-GET /admin/users – All users
+* GET /admin/products – All products
 
-PATCH /admin/users/:id/status – Update user status
-
-DELETE /admin/users/:id – Delete user
-
-GET /admin/orders – All orders
-
-GET /admin/products – All products
-
-GET /admin/analytics – Analytics dashboard
+* GET /admin/analytics – Analytics dashboard
 
 ---
 
 # Installation & Setup Guide:
 
+* git clone 'your-repository-url' then cd 'repo_folder'
+
 * npm install #Install dependencies
 
-* NOTE: Refer to the env.example file and proceed with your own credentials and configurations for .env file
+* NOTE: Refer to the env.example file and proceed with your own credentials and configurations for .env file 
 
 * npx prisma migrate dev --name init # Run database migrations
 
 * node prisma/seed.js # Seed initial data
 
-* npm run dev # Start development server
-
+* npm run dev # Start development server (starts on port: 3000 or your change to desired port)
 
 ---
 
 # API Documentation (Swagger)
-URL: http://localhost:3000/swagger/#/
-URL: http://localhost:3000/api-docs/#/
+* URL: http://localhost:3000/swagger/#/ #change the port number as per your running server port 
+* URL: http://localhost:3000/api-docs/#/ #change the port number as per your running server port 
