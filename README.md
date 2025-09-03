@@ -85,12 +85,13 @@ A B2B Order Management System built with Node.js, Express, and PostgreSQL. Suppo
 
 * node prisma/seed.js # Seed initial data
 
-* npm run dev # Start development server
+* npm run dev # Start development server (starts on port: 3000 or your change to desired port)
 
 ---
 
 # API Documentation (Swagger)
-* URL: http://localhost:3000/swagger/#/
-* URL: http://localhost:3000/api-docs/#/
+* URL: http://localhost:3000/swagger/#/ #change the port number as per your running server port 
+* URL: http://localhost:3000/api-docs/#/ #change the port number as per your running server port 
+
 
 
