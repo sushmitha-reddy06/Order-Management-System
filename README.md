@@ -75,7 +75,7 @@ A B2B Order Management System built with Node.js, Express, and PostgreSQL. Suppo
 
 # Installation & Setup Guide:
 
-* git clone 'your-repository-url' then 'cd repo_folder'
+* git clone 'your-repository-url' then cd 'repo_folder'
 
 * npm install #Install dependencies
 
@@ -92,4 +92,5 @@ A B2B Order Management System built with Node.js, Express, and PostgreSQL. Suppo
 # API Documentation (Swagger)
 * URL: http://localhost:3000/swagger/#/
 * URL: http://localhost:3000/api-docs/#/
+
 
